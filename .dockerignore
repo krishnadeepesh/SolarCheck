@@ -6,3 +6,5 @@ venv/
 .pytest_cache/
 *.log
 db.sqlite3
+staticfiles/
+media/
