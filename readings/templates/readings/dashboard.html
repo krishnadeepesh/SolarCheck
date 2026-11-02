@@ -1,0 +1,1404 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SolarCheck | Dashboard</title>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+
+    <style>
+
+        * {
+
+            margin: 0;
+
+            padding: 0;
+
+            box-sizing: border-box;
+
+        }
+
+
+
+        body {
+
+            font-family: Arial, Helvetica, sans-serif;
+
+            background: #ffffff;
+
+            color: #263c32;
+
+        }
+
+
+
+        .container {
+
+            max-width: 1450px;
+
+            min-height: 100vh;
+
+            margin: auto;
+
+            padding: 16px 30px;
+
+            display: flex;
+
+            flex-direction: column;
+
+        }
+
+
+
+        header {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            padding-bottom: 13px;
+
+            border-bottom: 1px solid #e7eee9;
+
+        }
+
+
+
+        .brand {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+        }
+
+
+
+        .brand-icon {
+
+            width: 43px;
+
+            height: 43px;
+
+            border-radius: 12px;
+
+            background: #eaf7ee;
+
+            display: grid;
+
+            place-items: center;
+
+            font-size: 25px;
+
+        }
+
+
+
+        .brand h1 {
+
+            font-size: 23px;
+
+            color: #174a32;
+
+        }
+
+
+
+        .subtitle {
+
+            color: #89958e;
+
+            font-size: 12px;
+
+            margin-top: 3px;
+
+        }
+
+
+
+        .status {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            padding: 9px 14px;
+
+            border-radius: 25px;
+
+            background: #f0f8f2;
+
+            color: #238447;
+
+            font-size: 12px;
+
+            font-weight: bold;
+
+        }
+
+
+
+        .status-dot {
+
+            height: 9px;
+
+            width: 9px;
+
+            border-radius: 50%;
+
+            background: #26a65b;
+
+        }
+
+
+
+        .welcome {
+
+            margin: 17px 0 13px;
+
+        }
+
+
+
+        .welcome h2 {
+
+            font-size: 21px;
+
+            color: #214a35;
+
+            margin-bottom: 5px;
+
+        }
+
+
+
+        .welcome p {
+
+            font-size: 13px;
+
+            color: #7d8982;
+
+        }
+
+
+
+        .solar-banner {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            min-height: 105px;
+
+            padding: 13px 22px;
+
+            border: 1px solid #e1eee5;
+
+            border-radius: 13px;
+
+            background: #fbfefb;
+
+            margin-bottom: 17px;
+
+        }
+
+
+
+        .solar-banner h3 {
+
+            color: #24583b;
+
+            font-size: 17px;
+
+            margin-bottom: 7px;
+
+        }
+
+
+
+        .solar-banner p {
+
+            font-size: 13px;
+
+            line-height: 1.5;
+
+            color: #7c8981;
+
+        }
+
+
+
+        .solar-animation {
+
+            position: relative;
+
+            width: 145px;
+
+            height: 80px;
+
+            flex-shrink: 0;
+
+        }
+
+
+
+        .sun {
+
+            position: absolute;
+
+            right: 38px;
+
+            top: 0;
+
+            width: 38px;
+
+            height: 38px;
+
+            border-radius: 50%;
+
+            background: #ffc94d;
+
+            box-shadow: 0 0 0 7px #fff3d5;
+
+            animation: sunshine 3s ease-in-out infinite;
+
+        }
+
+
+
+        .panel {
+
+            position: absolute;
+
+            right: 5px;
+
+            bottom: 2px;
+
+            width: 115px;
+
+            height: 34px;
+
+            background: #276c58;
+
+            border: 3px solid #194b40;
+
+            border-radius: 4px;
+
+            transform: skew(-15deg);
+
+            overflow: hidden;
+
+        }
+
+
+
+        .panel::before {
+
+            content: "";
+
+            position: absolute;
+
+            inset: 0;
+
+            background: repeating-linear-gradient(
+
+                90deg,
+
+                transparent 0,
+
+                transparent 27px,
+
+                #9bd8bd 28px,
+
+                #9bd8bd 29px
+
+            );
+
+        }
+
+
+
+        .panel::after {
+
+            content: "";
+
+            position: absolute;
+
+            inset: 0;
+
+            background: repeating-linear-gradient(
+
+                0deg,
+
+                transparent 0,
+
+                transparent 14px,
+
+                #9bd8bd 15px,
+
+                #9bd8bd 16px
+
+            );
+
+        }
+
+
+
+        @keyframes sunshine {
+
+            0%, 100% { transform: scale(1); }
+
+            50% { transform: scale(1.12); }
+
+        }
+
+
+
+        .section-heading {
+
+            font-size: 16px;
+
+            margin-bottom: 10px;
+
+            color: #304b3b;
+
+        }
+
+
+
+        .metrics {
+
+            display: grid;
+
+            grid-template-columns: repeat(3, 1fr);
+
+            gap: 14px;
+
+        }
+
+
+
+        .metric-card {
+
+            border: 1px solid #e5ece7;
+
+            border-radius: 12px;
+
+            padding: 16px 19px;
+
+            box-shadow: 0 3px 10px rgba(25, 55, 38, 0.035);
+
+        }
+
+
+
+        .metric-label {
+
+            color: #78877f;
+
+            font-size: 13px;
+
+            margin-bottom: 11px;
+
+        }
+
+
+
+        .metric-value {
+
+            font-size: 27px;
+
+            font-weight: bold;
+
+            color: #24543b;
+
+            overflow-wrap: anywhere;
+
+        }
+
+
+
+        .metric-unit {
+
+            color: #84918a;
+
+            font-size: 13px;
+
+            margin-left: 4px;
+
+        }
+
+
+
+        .metric-description {
+
+            font-size: 11px;
+
+            color: #9aa49e;
+
+            margin-top: 7px;
+
+        }
+
+
+
+        .performance {
+
+            border: 1px solid #e5ece7;
+
+            border-radius: 12px;
+
+            padding: 13px 17px;
+
+            margin: 15px 0;
+
+        }
+
+
+
+        .performance h3 {
+
+            font-size: 14px;
+
+            margin-bottom: 6px;
+
+            color: #304b3b;
+
+        }
+
+
+
+        .performance p {
+
+            font-size: 12px;
+
+            line-height: 1.5;
+
+            color: #748178;
+
+        }
+
+
+
+        /* Charts */
+
+
+
+        .charts-section {
+
+            margin: 18px 0;
+
+        }
+
+
+
+        .charts-grid {
+
+            display: grid;
+
+            grid-template-columns: repeat(2, 1fr);
+
+            gap: 15px;
+
+        }
+
+
+
+        .chart-card {
+
+            border: 1px solid #e5ece7;
+
+            border-radius: 12px;
+
+            padding: 15px;
+
+            height: 290px;
+
+            box-shadow: 0 3px 10px rgba(25, 55, 38, 0.035);
+
+        }
+
+
+
+        .chart-card h4 {
+
+            font-size: 14px;
+
+            color: #304b3b;
+
+            margin-bottom: 12px;
+
+        }
+
+
+
+        .chart-card canvas {
+
+            width: 100% !important;
+
+            height: 225px !important;
+
+        }
+
+
+
+        /* Two-column dashboard layout */
+        .dashboard-columns {
+            display: grid;
+            grid-template-columns: minmax(360px, 0.9fr) minmax(0, 1.4fr);
+            gap: 20px;
+            align-items: start;
+            margin-top: 4px;
+        }
+
+        .readings-column,
+        .charts-column {
+            min-width: 0;
+        }
+
+        .readings-column .metrics {
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .readings-column .metric-card {
+            padding: 13px 16px;
+        }
+
+        .readings-column .metric-label {
+            margin-bottom: 6px;
+        }
+
+        .readings-column .metric-value {
+            font-size: 24px;
+        }
+
+        .readings-column .performance {
+            margin: 12px 0;
+        }
+
+        .charts-column .charts-section {
+            margin: 0;
+        }
+
+        .charts-column .charts-grid {
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+
+        .charts-column .chart-card {
+            height: 265px;
+        }
+
+        .charts-column .chart-card canvas {
+            height: 200px !important;
+        }
+
+        .readings-section {
+
+            flex: 1;
+
+            min-height: 0;
+
+            display: flex;
+
+            flex-direction: column;
+
+        }
+
+
+
+        .table-wrapper {
+
+            border: 1px solid #e5ece7;
+
+            border-radius: 10px;
+
+            overflow-y: auto;
+
+            overflow-x: auto;
+
+            max-height: 225px;
+
+        }
+
+
+
+        table {
+
+            width: 100%;
+
+            border-collapse: collapse;
+
+            min-width: 500px;
+
+        }
+
+
+
+        th, td {
+
+            padding: 9px 14px;
+
+            text-align: left;
+
+            border-bottom: 1px solid #edf0ee;
+
+            font-size: 12px;
+
+        }
+
+
+
+        th {
+
+            position: sticky;
+
+            top: 0;
+
+            background: #f5faf6;
+
+            color: #617369;
+
+            z-index: 1;
+
+        }
+
+
+
+        td {
+
+            color: #43564b;
+
+        }
+
+
+
+        tr:last-child td {
+
+            border-bottom: none;
+
+        }
+
+
+
+        .empty {
+
+            text-align: center;
+
+            color: #89958e;
+
+            padding: 20px;
+
+        }
+
+
+
+        footer {
+
+            text-align: center;
+
+            color: #a0aaa4;
+
+            font-size: 11px;
+
+            padding-top: 12px;
+
+        }
+
+
+
+        @media (max-width: 900px) {
+            .dashboard-columns {
+                grid-template-columns: 1fr;
+            }
+
+            .readings-column .metrics {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .charts-column .charts-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 700px) {
+
+            .container {
+
+                padding: 14px;
+
+            }
+
+
+
+            header {
+
+                align-items: flex-start;
+
+            }
+
+
+
+            .brand h1 {
+
+                font-size: 20px;
+
+            }
+
+
+
+            .status {
+
+                font-size: 10px;
+
+                padding: 8px 10px;
+
+            }
+
+
+
+            .welcome h2 {
+
+                font-size: 19px;
+
+            }
+
+
+
+            .solar-banner {
+
+                padding: 14px;
+
+            }
+
+
+
+            .solar-banner p {
+
+                font-size: 12px;
+
+            }
+
+
+
+            .solar-animation {
+
+                transform: scale(.75);
+
+                transform-origin: right center;
+
+                width: 105px;
+
+                margin-left: -15px;
+
+            }
+
+
+
+            .metrics {
+
+                grid-template-columns: 1fr;
+
+                gap: 10px;
+
+            }
+
+
+
+            .metric-card {
+
+                padding: 14px 16px;
+
+            }
+
+
+
+            .metric-value {
+
+                font-size: 25px;
+
+            }
+
+
+
+            .charts-grid {
+
+                grid-template-columns: 1fr;
+
+            }
+
+
+
+            .chart-card {
+
+                height: 260px;
+
+            }
+
+
+
+            .chart-card canvas {
+
+                height: 205px !important;
+
+            }
+
+
+
+            .table-wrapper {
+
+                max-height: 260px;
+
+            }
+
+        }
+
+
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *, *::before, *::after {
+
+                animation: none !important;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+
+<body>
+
+<div class="container">
+
+
+
+    <header>
+
+        <div class="brand">
+
+            <div class="brand-icon">☀️</div>
+
+            <div>
+
+                <h1>SolarCheck</h1>
+
+                <div class="subtitle">Solar Power Monitoring System</div>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="status" id="systemStatus">
+
+            <span class="status-dot" id="statusDot"></span>
+
+            <span id="statusText">Checking connection...</span>
+
+        </div>
+
+    </header>
+
+
+
+    <section class="welcome">
+
+        <h2>Solar Performance Dashboard</h2>
+
+        <p>Monitor your solar panel's electrical output in one place.</p>
+
+    </section>
+
+
+
+    <section class="solar-banner">
+
+        <div>
+
+            <h3>Harnessing the Power of the Sun</h3>
+
+            <p>
+
+                SolarCheck monitors voltage and current from your solar panel
+
+                and calculates its electrical power output.
+
+            </p>
+
+        </div>
+
+
+
+        <div class="solar-animation" aria-hidden="true">
+
+            <div class="sun"></div>
+
+            <div class="panel"></div>
+
+        </div>
+
+    </section>
+
+
+
+    <section class="dashboard-columns">
+        <div class="readings-column">
+            <h3 class="section-heading">Live Measurements</h3>
+
+
+
+    <section class="metrics">
+
+
+
+        <div class="metric-card">
+
+            <div class="metric-label">⚡ Voltage</div>
+
+            <div>
+
+                <span class="metric-value" id="voltageValue">
+
+                    {% if latest %}{{ latest.voltage|floatformat:2 }}{% else %}--{% endif %}
+
+                </span>
+
+                <span class="metric-unit">V</span>
+
+            </div>
+
+            <div class="metric-description">Electrical voltage from the panel</div>
+
+        </div>
+
+
+
+        <div class="metric-card">
+
+            <div class="metric-label">↗ Current</div>
+
+            <div>
+
+                <span class="metric-value" id="currentValue">
+
+                    {% if latest %}{{ latest.current|floatformat:3 }}{% else %}--{% endif %}
+
+                </span>
+
+                <span class="metric-unit">A</span>
+
+            </div>
+
+            <div class="metric-description">Electrical current being delivered</div>
+
+        </div>
+
+
+
+        <div class="metric-card">
+
+            <div class="metric-label">☀ Power Output</div>
+
+            <div>
+
+                <span class="metric-value" id="powerValue">
+
+                    {% if latest %}{{ latest.power|floatformat:3 }}{% else %}--{% endif %}
+
+                </span>
+
+                <span class="metric-unit">W</span>
+
+            </div>
+
+            <div class="metric-description">Calculated electrical power output</div>
+
+        </div>
+
+
+
+    </section><section class="performance">
+
+        <h3>Performance Information</h3>
+
+        <p id="performanceMessage">
+
+            {% if latest %}
+
+{% if latest.current <= 0 %}
+                    No measurable current is being recorded. Check sunlight,
+
+                    panel connections and the sensor.
+
+{% elif latest.voltage <= 0 %}
+                    Voltage is zero or below. Check the panel and sensor connections.
+
+                {% else %}
+
+                    Electrical readings are available. Actual output depends
+
+                    on sunlight and the connected load.
+
+                {% endif %}
+
+            {% else %}
+
+                No readings have been received yet. Check the ESP32
+
+                and Django server.
+
+            {% endif %}
+
+        </p>
+
+    </section><section class="readings-section">
+
+        <h3 class="section-heading">10 Recent Readings</h3>
+
+
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Date &amp; Time (IST)</th>
+
+                        <th>Voltage (V)</th>
+
+                        <th>Current (A)</th>
+
+                        <th>Power (W)</th>
+
+                    </tr>
+
+                </thead>
+
+
+
+                <tbody id="readingsTableBody">
+
+                    {% for reading in readings %}
+
+                    <tr>
+
+                        <td>{{ reading.timestamp|date:"d M Y, h:i:s A" }}</td>
+
+                        <td>{{ reading.voltage|floatformat:2 }}</td>
+
+                        <td>{{ reading.current|floatformat:3 }}</td>
+
+                        <td>{{ reading.power|floatformat:3 }}</td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="4" class="empty">
+
+                            No readings available yet.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+        </div>
+
+        <div class="charts-column">
+            <section class="charts-section">
+
+        <h3 class="section-heading">Solar Performance Charts</h3>
+
+
+
+        <div class="charts-grid">
+
+
+
+            <div class="chart-card">
+
+                <h4>Voltage Over Time (V)</h4>
+
+                <canvas id="voltageChart"></canvas>
+
+            </div>
+
+
+
+            <div class="chart-card">
+
+                <h4>Current Over Time (A)</h4>
+
+                <canvas id="currentChart"></canvas>
+
+            </div>
+
+
+
+            <div class="chart-card">
+
+                <h4>Power Output Over Time (W)</h4>
+
+                <canvas id="powerChart"></canvas>
+
+            </div>
+
+
+
+        </div>
+
+    </section>
+        </div>
+    </section>
+
+
+
+    <footer>
+
+        SolarCheck · IoT-Based Solar Power Monitoring System
+
+        · Live updates every 5 seconds
+
+    </footer>
+
+
+
+</div>
+
+
+
+<script>
+    const voltageChart = createChart(
+        "voltageChart",
+        "Voltage (V)",
+        "#e3a52f",
+        "rgba(227, 165, 47, 0.12)"
+    );
+
+    const currentChart = createChart(
+        "currentChart",
+        "Current (A)",
+        "#3287c8",
+        "rgba(50, 135, 200, 0.12)"
+    );
+
+    const powerChart = createChart(
+        "powerChart",
+        "Power (W)",
+        "#26945a",
+        "rgba(38, 148, 90, 0.12)"
+    );
+
+    function createChart(canvasId, label, borderColor, backgroundColor) {
+        const canvas = document.getElementById(canvasId);
+
+        if (!canvas || typeof Chart === "undefined") {
+            return null;
+        }
+
+        return new Chart(canvas, {
+            type: "line",
+            data: {
+                labels: [],
+                datasets: [{
+                    label: label,
+                    data: [],
+                    borderColor: borderColor,
+                    backgroundColor: backgroundColor,
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 3,
+                    pointHoverRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: {
+                        title: { display: true, text: "Time" }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: label }
+                    }
+                }
+            }
+        });
+    }
+
+    function updateChart(chart, readings, field) {
+        if (!chart) return;
+
+        chart.data.labels = readings.map(reading =>
+            new Date(reading.timestamp).toLocaleTimeString()
+        );
+
+        chart.data.datasets[0].data = readings.map(reading =>
+            Number(reading[field])
+        );
+
+        chart.update();
+    }
+
+    function updateTable(readings) {
+        const tableBody = document.getElementById("readingsTableBody");
+
+        if (!tableBody) return;
+
+        if (!readings.length) {
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="4" class="empty">No readings available yet.</td>
+                </tr>`;
+            return;
+        }
+
+        tableBody.innerHTML = readings.slice().reverse().map(reading => `
+            <tr>
+                <td>${new Date(reading.timestamp).toLocaleString()}</td>
+                <td>${Number(reading.voltage).toFixed(2)}</td>
+                <td>${Number(reading.current).toFixed(3)}</td>
+                <td>${Number(reading.power).toFixed(3)}</td>
+            </tr>
+        `).join("");
+    }
+
+    function updateStatus(latest) {
+        const statusText = document.getElementById("statusText");
+        const statusDot = document.getElementById("statusDot");
+        const systemStatus = document.getElementById("systemStatus");
+        const message = document.getElementById("performanceMessage");
+
+        if (!latest) {
+            statusText.textContent = "Waiting for readings";
+            statusDot.style.background = "#e0a12b";
+            systemStatus.style.background = "#fff8e8";
+            systemStatus.style.color = "#9b711d";
+            message.textContent =
+                "No readings have been received yet. Check the ESP32 and Django server.";
+            return;
+        }
+
+        const secondsOld =
+            (Date.now() - new Date(latest.timestamp).getTime()) / 1000;
+
+        if (secondsOld <= 15) {
+            statusText.textContent = "Receiving live data";
+            statusDot.style.background = "#26a65b";
+            systemStatus.style.background = "#f0f8f2";
+            systemStatus.style.color = "#238447";
+        } else {
+            statusText.textContent = "No recent readings";
+            statusDot.style.background = "#e0a12b";
+            systemStatus.style.background = "#fff8e8";
+            systemStatus.style.color = "#9b711d";
+        }
+
+        if (Number(latest.current) <= 0) {
+            message.textContent =
+                "No measurable current is being recorded. Check sunlight, panel connections and the sensor.";
+        } else if (Number(latest.voltage) <= 0) {
+            message.textContent =
+                "Voltage is zero or below. Check the panel and sensor connections.";
+        } else {
+            message.textContent =
+                "Electrical readings are available. Actual output depends on sunlight and the connected load.";
+        }
+    }
+
+    async function fetchLiveData() {
+        try {
+            const response = await fetch("/api/readings/", {
+                cache: "no-store"
+            });
+
+            if (!response.ok) {
+                throw new Error("Unable to retrieve sensor readings");
+            }
+
+            const result = await response.json();
+            const readings = result.readings;
+            const latest = result.latest;
+
+            if (latest) {
+                document.getElementById("voltageValue").textContent =
+                    Number(latest.voltage).toFixed(2);
+
+                document.getElementById("currentValue").textContent =
+                    Number(latest.current).toFixed(3);
+
+                document.getElementById("powerValue").textContent =
+                    Number(latest.power).toFixed(3);
+            }
+
+            updateChart(voltageChart, readings, "voltage");
+            updateChart(currentChart, readings, "current");
+            updateChart(powerChart, readings, "power");
+            updateTable(readings);
+            updateStatus(latest);
+
+        } catch (error) {
+            console.error("Live data error:", error);
+            document.getElementById("statusText").textContent =
+                "Connection error";
+            document.getElementById("statusDot").style.background =
+                "#d9534f";
+        }
+    }
+
+    fetchLiveData();
+    setInterval(fetchLiveData, 5000);
+</script>
+
+
+
+</body>
+
+</html>
