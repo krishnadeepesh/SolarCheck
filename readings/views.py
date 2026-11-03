@@ -10,51 +10,42 @@ from .models import SolarReading
 
 @csrf_exempt
 def receive_reading(request):
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
+    if request.method != "POST":
+        return JsonResponse({"error": "Only POST requests are allowed"}, status=405)
 
-            voltage = float(data["voltage"])
-            current = float(data["current"])
-            power = voltage * current
+    try:
+        data = json.loads(request.body)
+        voltage = float(data["voltage"])
+        current = float(data["current"])
 
-            reading = SolarReading.objects.create(
-                voltage=voltage,
-                current=current,
-                power=power
-            )
+        if voltage < 0 or current < 0:
+            raise ValueError("Voltage and current must be non-negative")
 
-            return JsonResponse({
-                "message": "Reading saved successfully",
-                "voltage": reading.voltage,
-                "current": reading.current,
-                "power": reading.power
-            })
+        power = voltage * current
+        reading = SolarReading.objects.create(
+            voltage=voltage,
+            current=current,
+            power=power,
+        )
 
-        except (ValueError, KeyError, json.JSONDecodeError):
-            return JsonResponse(
-                {"error": "Invalid reading data"},
-                status=400
-            )
+        return JsonResponse({
+            "message": "Reading saved successfully",
+            "id": reading.id,
+            "voltage": reading.voltage,
+            "current": reading.current,
+            "power": reading.power,
+        })
 
-    return JsonResponse(
-        {"error": "Only POST requests are allowed"},
-        status=405
-    )
+    except (ValueError, TypeError, KeyError, json.JSONDecodeError):
+        return JsonResponse(
+            {"error": "Invalid reading data. Provide numeric voltage and current values."},
+            status=400,
+        )
 
 
 def dashboard(request):
-    readings = SolarReading.objects.order_by("-timestamp")[:10]
-    latest = SolarReading.objects.order_by("-timestamp").first()
-
-    return render(
-        request,
-        "readings/dashboard.html",
-        {
-            "readings": readings,
-            "latest": latest,
-        }
-    )
+    latest = SolarReading.objects.order_by("-timestamp", "-id").first()
+    return render(request, "readings/dashboard.html", {"latest": latest})
 
 
 def readings_data(request):
@@ -64,33 +55,42 @@ def readings_data(request):
             status=405
         )
 
+    # Retrieve only the latest 50 records from the database
     readings = list(
-        SolarReading.objects.order_by("-timestamp")[:10]
+        SolarReading.objects.order_by("-timestamp", "-id")[:50]
     )
 
-    data = []
+    # Reverse them so the oldest of these 50 appears first
+    readings.reverse()
 
-    for reading in reversed(readings):
-        data.append({
+    data = [
+        {
             "id": reading.id,
             "voltage": reading.voltage,
             "current": reading.current,
             "power": reading.power,
             "timestamp": timezone.localtime(
                 reading.timestamp
-            ).isoformat()
-        })
+            ).isoformat(),
+        }
+        for reading in readings
+    ]
 
-    latest = readings[0] if readings else None
+    latest = readings[-1] if readings else None
 
-    return JsonResponse({
-        "readings": data,
-        "latest": {
+    latest_data = None
+
+    if latest:
+        latest_data = {
             "voltage": latest.voltage,
             "current": latest.current,
             "power": latest.power,
             "timestamp": timezone.localtime(
                 latest.timestamp
-            ).isoformat()
-        } if latest else None
+            ).isoformat(),
+        }
+
+    return JsonResponse({
+        "readings": data,
+        "latest": latest_data
     })
