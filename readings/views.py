@@ -11,17 +11,22 @@ from .models import SolarReading
 @csrf_exempt
 def receive_reading(request):
     if request.method != "POST":
-        return JsonResponse({"error": "Only POST requests are allowed"}, status=405)
+        return JsonResponse(
+            {"error": "Only POST requests are allowed"},
+            status=405
+        )
 
     try:
         data = json.loads(request.body)
-        voltage = float(data["voltage"])
-        current = float(data["current"])
 
-        if voltage < 0 or current < 0:
-            raise ValueError("Voltage and current must be non-negative")
+        # Convert negative voltage and current values to zero
+        voltage = max(0.0, float(data["voltage"]))
+        current = max(0.0, float(data["current"]))
 
+        # Calculate power using corrected values
         power = voltage * current
+
+        # Save the reading in the database
         reading = SolarReading.objects.create(
             voltage=voltage,
             current=current,
@@ -38,10 +43,11 @@ def receive_reading(request):
 
     except (ValueError, TypeError, KeyError, json.JSONDecodeError):
         return JsonResponse(
-            {"error": "Invalid reading data. Provide numeric voltage and current values."},
-            status=400,
+            {
+                "error": "Invalid reading data. Provide numeric voltage and current values."
+            },
+            status=400
         )
-
 
 def dashboard(request):
     latest = SolarReading.objects.order_by("-timestamp", "-id").first()
