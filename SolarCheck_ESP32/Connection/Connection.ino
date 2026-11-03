@@ -1,6 +1,7 @@
 
 #include <WiFi.h>
 #include <HTTPClient.h>
+#include <WiFiClientSecure.h>
 #include <Wire.h>
 #include <Adafruit_INA219.h>
 
@@ -9,7 +10,7 @@ const char* ssid = "REDMI Note 17 Pro 5G";
 const char* password = "krishna2004";
 
 // Django server API address
-const char* serverURL = "http://10.63.187.187:8000/api/reading/";
+const char* serverURL = "https://solarcheck-qcjf.onrender.com/api/reading/";
 Adafruit_INA219 ina219;
 
 void setup() {
@@ -102,15 +103,32 @@ void loop() {
                   ",\"current\":" + String(current, 4) + "}";
 
     // Send data to Django backend
-    HTTPClient http;
+    WiFiClientSecure client;
+client.setInsecure();  // Temporary testing only
 
-    http.setConnectTimeout(5000);
-    http.setTimeout(5000);
+HTTPClient http;
 
-    http.begin(serverURL);
-    http.addHeader("Content-Type", "application/json");
+http.setConnectTimeout(20000);
+http.setTimeout(120000);
 
-    int responseCode = http.POST(json);
+http.begin(client, serverURL);
+http.addHeader("Content-Type", "application/json");
+
+Serial.println("Sending data to Render...");
+Serial.println(json);
+
+int responseCode = http.POST(json);
+
+Serial.print("Server response: ");
+Serial.println(responseCode);
+
+if (responseCode > 0) {
+  Serial.println(http.getString());
+} else {
+  Serial.println(http.errorToString(responseCode));
+}
+
+http.end();
 
     Serial.println("Sending data to Django...");
     Serial.println(json);

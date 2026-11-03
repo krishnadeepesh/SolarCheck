@@ -1114,11 +1114,11 @@
 
                         <td>{{ reading.timestamp|date:"d M Y, h:i:s A" }}</td>
 
-                        <td>{{ reading.voltage|floatformat:2 }}</td>
+<td>{{ reading.voltage|floatformat:4 }}</td>
 
-                        <td>{{ reading.current|floatformat:3 }}</td>
+<td>{{ reading.current|floatformat:5 }}</td>
 
-                        <td>{{ reading.power|floatformat:3 }}</td>
+<td>{{ reading.power|floatformat:6 }}</td>
 
                     </tr>
 
